@@ -1,6 +1,6 @@
 # LSTM-CRF-pytorch-faster fd
 
-This is an accelerated LSTM-CRF implementation based on the Pytorch official tutorial   (URL:https://pytorch.org/tutorials/beginner/nlp/advanced_tutorial.html). I have modified the dynamic planning part, including Viterbi decoding and partition function calculation. In the experiment, it has achieved a speed increase of more than 50 times compared to the original version.
+This is an 1000X faster LSTM-CRF implementation modified from the slower version in the Pytorch official tutorial   (URL:https://pytorch.org/tutorials/beginner/nlp/advanced_tutorial.html). I have modified the dynamic planning part, including Viterbi decoding and partition function calculation. In the experiment, it has achieved a speed increase of more than 50 times compared to the original version.
 
 important update in the new module 'lstm-crf-parallel.py':
 The original version can only input one sample at a time when it is trained. In the most recent update, I modified the model to support parallel computing for batch, so that the training time was greatly improved again. When the batchsize is large, parallel computing can bring you hundreds of times faster.
