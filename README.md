@@ -1,4 +1,4 @@
-# LSTM-CRF-pytorch-faster fd
+# LSTM-CRF-pytorch-faster
 
 This is a more than 1000X faster LSTM-CRF implementation modified from the slower version in the Pytorch official tutorial   (URL:https://pytorch.org/tutorials/beginner/nlp/advanced_tutorial.html). 
 
@@ -8,4 +8,8 @@ In the most recent updated module 'LSTM_CRF_faster_parallel.py', I modified the 
 
 The code defaults to training word embedding from scratch. If you need to use pre-training word embedding, or take another model's outputs as it's inputs, you need to make some changes to the code, directly take the embedding as inpus of method '_get_lstm_features_parallel'.
 
-(in previous version, parallel version 'LSTM_CRF_faster_parallel.py' is not work, now the bug is rectified)
+Moreover, the code runs on the CPU by default, and if you need to experience faster speed, you need to manually deploy the code to the GPU.
+ 
+(In previous version, parallel version 'LSTM_CRF_faster_parallel.py' is not work, now the bug is rectified. For more questions please send email to M201570013@outlook.com)
+
+
