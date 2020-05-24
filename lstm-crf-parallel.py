@@ -22,7 +22,7 @@ def prepare_sequence(seq, to_ix):
     idxs = [to_ix[w] for w in seq]
     return torch.tensor(idxs, dtype=torch.long)
 
-def prepare_sequence_batch(data ,word_to_ix, tagto_ix):
+def prepare_sequence_batch(data ,word_to_ix, tag_to_ix):
     seqs = [i[0] for i in data]
     tags = [i[1] for i in data]
     max_len = max([len(seq) for seq in seqs])
