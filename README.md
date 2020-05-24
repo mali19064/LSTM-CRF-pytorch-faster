@@ -6,8 +6,6 @@ I have modified the dynamic planning part, including Viterbi decoding and partit
 
 In the most recent updated module 'LSTM_CRF_faster_parallel.py', I modified the model to support parallel computing for batch, so that the training time was greatly improved again. When the batchsize is large, parallel computing can bring you hundreds of times faster.
 
-You only need to call the function 'neg_log_likelihood_parallel' in module 'lstm-crf-parallel.py', instead of the original 'neg_log_likelihood', to perform batch parallel training. 
-
 The code defaults to training word embedding from scratch. If you need to use pre-training word embedding, or take another model's outputs as it's inputs, you need to make some changes to the code, directly take the embedding as inpus of method '_get_lstm_features_parallel'.
 
-(in previous version, parallel version is not work, now the bug is rectified)
+(in previous version, parallel version 'LSTM_CRF_faster_parallel.py' is not work, now the bug is rectified)
