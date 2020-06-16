@@ -63,7 +63,7 @@ class BiLSTM_CRF_MODIFY_PARALLEL(nn.Module):
 
         self.word_embeds = nn.Embedding(vocab_size, embedding_dim)
         self.lstm = nn.LSTM(embedding_dim, hidden_dim // 2,
-                            num_layers=1, bidirectional=True)
+                            num_layers=1, bidirectional=True, batch_first=True)
 
         # Maps the output of the LSTM into tag space.
         self.hidden2tag = nn.Linear(hidden_dim, self.tagset_size)
@@ -167,17 +167,19 @@ class BiLSTM_CRF_MODIFY_PARALLEL(nn.Module):
 
     def _get_lstm_features(self, sentence):
         self.hidden = self.init_hidden()
-        embeds = self.word_embeds(sentence).view(len(sentence), 1, -1)
+        embeds = self.word_embeds(sentence).unsqueeze(dim=0)
+        #embeds = self.word_embeds(sentence).view(len(sentence), 1, -1).transpose(0,1)
         lstm_out, self.hidden = self.lstm(embeds)
-        lstm_out = lstm_out.view(embeds.shape[0], self.hidden_dim)
+        #lstm_out = lstm_out.view(embeds.shape[1], self.hidden_dim)
+        lstm_out = lstm_out.squeeze()
         lstm_feats = self.hidden2tag(lstm_out)
         return lstm_feats
 
     def _get_lstm_features_parallel(self, sentence):
         self.hidden = self.init_hidden()
-        embeds = self.word_embeds(sentence).transpose(0,1)
+        embeds = self.word_embeds(sentence)
         lstm_out, self.hidden = self.lstm(embeds)
-        lstm_feats = self.hidden2tag(lstm_out).transpose(0,1)
+        lstm_feats = self.hidden2tag(lstm_out)
         return lstm_feats
 
     def _score_sentence(self, feats, tags):
@@ -297,30 +299,14 @@ class BiLSTM_CRF_MODIFY_PARALLEL(nn.Module):
 
     def neg_log_likelihood(self, sentence, tags):
         feats = self._get_lstm_features(sentence)
-        # begin=time.time()
-        # forward_score = self._forward_alg(feats)
-        # print('time consuming of forward_score: %f' %(time.time()-begin))
-        # begin = time.time()
         forward_score = self._forward_alg_new(feats)
-        # print('time consuming of forward_score_new: %f' % (time.time() - begin))
-        # begin = time.time()
-        # gold_score = self._score_sentence(feats, tags)[0].cpu()
         gold_score = self._score_sentence(feats, tags)[0]
-        # print('time consuming of gold_score: %f' % (time.time() - begin))
         return forward_score - gold_score
 
     def neg_log_likelihood_parallel(self, sentences, tags):
         feats = self._get_lstm_features_parallel(sentences)
-        # begin=time.time()
-        # forward_score = self._forward_alg(feats)
-        # print('time consuming of forward_score: %f' %(time.time()-begin))
-        # begin = time.time()
         forward_score = self._forward_alg_new_parallel(feats)
-        # print('time consuming of forward_score_new: %f' % (time.time() - begin))
-        # begin = time.time()
-        # gold_score = self._score_sentence(feats, tags)[0].cpu()
         gold_score = self._score_sentence_parallel(feats, tags)
-        # print('time consuming of gold_score: %f' % (time.time() - begin))
         return torch.sum(forward_score - gold_score)
 
     def forward(self, sentence):  # dont confuse this with _forward_alg above.
