@@ -198,7 +198,7 @@ class BiLSTM_CRF_MODIFY_PARALLEL(nn.Module):
         #feats = feats.transpose(0,1)
 
         score = torch.zeros(tags.shape[0])#.to('cuda')
-        tags = torch.cat([torch.full([tags.shape[0],1],self.tag_to_ix[START_TAG]).long(),tags],dim=1)
+        tags = torch.cat([torch.full([tags.shape[0],1],self.tag_to_ix[START_TAG], dtype=torch.long),tags],dim=1)
         for i in range(feats.shape[1]):
             feat=feats[:,i,:]
             score = score + \
